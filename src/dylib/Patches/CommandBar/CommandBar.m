@@ -688,6 +688,10 @@ static void DPTabList_backgroundDoubleClick(NSView *self, SEL _cmd, id gesture) 
     if (!DPHiding() || !DPClickedNewTab(self.window)) DPCallOriginal(DPTabList_backgroundDoubleClick, self, gesture);
 }
 
+void DPExpectLastTabReplacement(NSWindow *window) {
+    if (window) DPSet(window, &DPClosedAtKey, @(NSProcessInfo.processInfo.systemUptime));
+}
+
 static NSEvent *DPCommandBarKey(NSEvent *event) {
     NSWindow *window = event.window;
     if (!DPCommandBar.on || !window) return event;

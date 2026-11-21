@@ -32,6 +32,7 @@ NSMenuItem *DPMenuItemTitled(NSMenu *menu, NSString *title);
 NSUserDefaults *DPSettings(void);
 void DPShowHiddenBars(void);  // Bars hidden for an empty window come back.
 BOOL DPHasStrip(NSWindow *window);  // Tabs at the top.
+void DPExpectLastTabReplacement(NSWindow *window);  // The next new tab page replaces a closing last tab, so it opens blank.
 
 BOOL DPInTabLayout(NSView *view);
 NSEvent *DPTabLayoutMouseDown(DPCommandBarOverlay *overlay, NSEvent *event);  // nil if the click stops there.
