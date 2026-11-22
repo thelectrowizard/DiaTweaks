@@ -1,8 +1,7 @@
-#import "StdPatch/StdPatch.h"
+#import "Patches/KeepLastTab/KeepLastTab.h"
 #import "Patches/CommandBar/Tabs.h"
 #import "Patches/CommandBar/CommandBarOverlay.h"
 
-extern DPPatch DPKeepLastTab;
 
 static const NSEventModifierFlags DPMods = NSEventModifierFlagCommand | NSEventModifierFlagShift | NSEventModifierFlagOption | NSEventModifierFlagControl;
 
@@ -34,6 +33,7 @@ static BOOL DPReplaceLastTab(NSWindow *window) {
     // With the command bar on, the replacement is left blank, as when Dia replaces a closed last tab.
     if (DPCommandBar.on) DPExpectLastTabReplacement(window);
     [newTab.menu performActionForItemAtIndex:[newTab.menu indexOfItem:newTab]];
+    DPShowSidebarWhileEmpty(window);
     // Close the old tab once the new one is in front, so the window never runs out of tabs.
     NSString *closingID = DPTabID(closing);
     __weak NSWindow *weak = window;
@@ -64,6 +64,7 @@ static SEL DPCloseTabAction;
 @end
 
 static void DPInstallKeepLastTab(void) {
+    DPInstallSidebarLock();
     [NSEvent addLocalMonitorForEventsMatchingMask:NSEventMaskKeyDown handler:^NSEvent *(NSEvent *event) { return DPKeepLastTabKey(event); }];
     static DPCloseTabRelay *relay;
     DPOnLaunch(^{
@@ -88,7 +89,7 @@ DP_PATCH(DPKeepLastTab) {
     .key = @"keepLastTab",
     .order = 86,
     .title = @"Keep Window Open on Last Tab",
-    .detail = @"Closing a window’s last tab leaves a new tab page instead of closing the window, and closing that closes the window. With Open New Tabs in Command Bar on, it leaves an empty page instead, like Arc and Zen.",
+    .detail = @"Closing a window’s last tab leaves a new tab page instead of closing the window, and closing that closes the window. With Open New Tabs in Command Bar on, it leaves an empty page instead, like Arc and Zen. The sidebar stays open until you open a page.",
     .symbol = @"macwindow.badge.plus macwindow",
     .tint = @"systemPinkColor",
     .section = @"Tabs",
